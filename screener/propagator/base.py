@@ -14,9 +14,10 @@ class BasePropagator:
     def propagate(
         self,
         tle_batch: list[tuple[str, str]],
+        julian_date_start: float,
+        julian_date_end: float,
         time_mesh: float,
-        end_time: float,
-    ) -> list[RVPairs]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         """
         Propagate a batch of TLEs to a given time and return a tensor of shape (batch_size, 6)
         with the propagated state vectors.

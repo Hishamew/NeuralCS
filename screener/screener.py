@@ -7,10 +7,13 @@ class Screener:
 
     def __init__(
         self,
+        distance_threshold: float = 30,
+        lookout_window: float = 60 * 60 * 24,
         coarse_mesh: float = 60,
         fine_mesh: float = 1,
         propagator: BasePropagator = None,
-    ):
+    ) -> None:
+        self.lookout_window = lookout_window
         self.coarse_mesh = coarse_mesh
         self.fine_mesh = fine_mesh
         self.propagator = propagator
@@ -20,20 +23,45 @@ class Screener:
         Screen a batch of TLEs and return a tensor of shape (batch_size, batch_size) with
         the all vs all conjunction screening results.
         """
+        pre_screen_results = self.pre_screen(tle_batch)
+        coarse_screen_results = self.coarse_screen(
+            tle_batch,
+            pre_screen_results,
+        )
+        fine_screen_results = self.fine_screen(
+            tle_batch,
+            coarse_screen_results,
+        )
 
-    def pre_screen(self, tle_batch: list[tuple[str, str]]) -> torch.Tensor:
+    def pre_screen(
+        self,
+        tle_batch: list[tuple[str, str]],
+        skip_compair: torch.Tensor = None,
+    ) -> torch.Tensor:
         """
         Pre-screen a batch of TLEs and return a tensor of shape (batch_size, batch_size) with
         the all vs all conjunction screening results.
         """
 
-    def coarse_screen(self, tle_batch: list[tuple[str, str]]) -> torch.Tensor:
+    def coarse_screen(
+        self,
+        tle_batch: list[tuple[str, str]],
+        skip_compair: torch.Tensor = None,
+    ) -> torch.Tensor:
         """
         Screen a batch of TLEs and return a tensor of shape (batch_size, batch_size) with
         the all vs all conjunction screening results.
         """
 
-    def fine_screen(self, tle_batch: list[tuple[str, str]]) -> torch.Tensor:
+    def fine_screen(
+        self,
+        tle_batch: list[tuple[str, str]],
+        skip_compair: torch.Tensor = None,
+    ) -> tuple[
+            torch.Tensor,
+            torch.Tensor,
+            torch.Tensor,
+    ]:
         """
         Screen a batch of TLEs and return a tensor of shape (batch_size, batch_size) with
         the all vs all conjunction screening results.
